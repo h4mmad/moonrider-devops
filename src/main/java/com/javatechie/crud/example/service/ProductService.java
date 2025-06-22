@@ -45,5 +45,13 @@ public class ProductService {
         return repository.save(existingProduct);
     }
 
+    public List<Product> searchByKeyword(String keyword) {
+        if (keyword == null || keyword.length() < 2) {
+            throw new IllegalArgumentException("Search term too short");
+        }
+
+        return repository.findByNameContainingIgnoreCase(keyword);
+    }
+
 
 }
