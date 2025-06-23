@@ -1,0 +1,23 @@
+{
+  "name": "spring-boot-crud-example",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h4mmad/moonrider-devops.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/h4mmad/moonrider-devops/issues"
+  },
+  "homepage": "https://github.com/h4mmad/moonrider-devops#readme",
+  "devDependencies": {
+    "standard-version": "^9.5.0"
+  }
+}
