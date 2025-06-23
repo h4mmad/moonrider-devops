@@ -2,9 +2,12 @@ package com.javatechie.crud.example.controller;
 
 import com.javatechie.crud.example.entity.Product;
 import com.javatechie.crud.example.service.ProductService;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
@@ -48,10 +51,6 @@ public class ProductController {
         return service.deleteProduct(id);
     }
     
-    @GetMapping("/products/search")
-    public List<Product> searchProducts(@RequestParam String keyword) {
-        return service.searchProductsByKeyword(keyword);
-    }
 
     @GetMapping("/products/search")
 public ResponseEntity<?> searchProducts(@RequestParam(required = false) String name,

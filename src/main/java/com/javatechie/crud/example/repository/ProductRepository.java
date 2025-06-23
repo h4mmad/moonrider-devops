@@ -2,6 +2,13 @@ package com.javatechie.crud.example.repository;
 
 import com.javatechie.crud.example.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+// For ProductRepository.java
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+// For ProductController.java
+import org.springframework.http.ResponseEntity;
 
 public interface ProductRepository extends JpaRepository<Product,Integer> {
     Product findByName(String name);
