@@ -52,4 +52,17 @@ public class ProductController {
     public List<Product> searchProducts(@RequestParam String keyword) {
         return service.searchProductsByKeyword(keyword);
     }
+
+    @GetMapping("/products/search")
+public ResponseEntity<?> searchProducts(@RequestParam(required = false) String name,
+                                        @RequestParam(required = false) Double minPrice,
+                                        @RequestParam(required = false) Double maxPrice) {
+    try {
+        List<Product> result = service.search(name, minPrice, maxPrice);
+        return ResponseEntity.ok(result);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+
 }

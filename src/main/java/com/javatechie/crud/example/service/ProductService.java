@@ -53,5 +53,12 @@ public class ProductService {
         return repository.findByNameContainingIgnoreCase(keyword);
     }
 
+    public List<Product> search(String name, Double minPrice, Double maxPrice) {
+    if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+        throw new IllegalArgumentException("minPrice cannot be greater than maxPrice");
+    }
+    return repository.searchProducts(name, minPrice, maxPrice);
+}
+
 
 }
