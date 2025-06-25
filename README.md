@@ -104,5 +104,5 @@ This architecture is ideal for:
 
 - All resources are deployed in the `default` namespace
 - The architecture supports easy addition of new application versions
-- Database migrations should be handled carefully when schema changes are needed
-- Consider implementing proper monitoring and logging for production use
+- For the `host` field in ingress, `moonrider.local` is used which is mapped in `/etc/hosts` as `192.168.1.7`. Error was shown when the IP address was directly written in the hosts field
+- MicroK8s was used to setup the K8s cluster
