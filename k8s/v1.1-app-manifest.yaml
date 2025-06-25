@@ -1,0 +1,93 @@
+# v1.1-app-manifest.yaml - Spring Boot App v1.1 in default namespace
+
+# Spring App v1.1 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-v1.1-deployment
+  labels:
+    app: spring-app-v1.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app-v1.1
+  template:
+    metadata:
+      labels:
+        app: spring-app-v1.1
+    spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          until nc -z mysql-service 3306; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 5
+          done
+          echo "MySQL is ready!"
+      containers:
+      - name: spring-app
+        image: h4mmad/spring-boot-app:v1.1.0
+        ports:
+        - containerPort: 9191
+        env:
+        # Reference the ConfigMap and Secret defined in default namespace
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config-v1
+              key: SPRING_DATASOURCE_URL
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config-v1
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets-v1
+              key: DB_PASSWORD
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          valueFrom:
+            configMapKeyRef:
+              name: app-config-v1
+              key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config-v1
+              key: SPRING_PROFILES_ACTIVE
+        - name: SPRING_JPA_SHOW_SQL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config-v1
+              key: SPRING_JPA_SHOW_SQL
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      restartPolicy: Always
+
+---
+
+# Spring App v1.1 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-service-v1-1
+  labels:
+    app: spring-app-v1.1
+spec:
+  selector:
+    app: spring-app-v1.1
+  ports:
+  - port: 9191
+    targetPort: 9191
+    protocol: TCP
+  type: ClusterIP 
