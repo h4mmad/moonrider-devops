@@ -2,19 +2,19 @@
 
 This project demonstrates a microservices architecture using Spring Boot applications deployed on Kubernetes with multiple version support and shared database infrastructure.
 
-## 🏗️ Architecture Overview
+### 🏗️ Architecture Overview
 
-### Components
+#### Components
 - **Spring Boot Applications**: Multiple versions (v1.0.0, v1.1.0, v2.0.0) of the same CRUD application
 - **MySQL Database**: Shared database instance used by all application versions
 - **Kubernetes Ingress**: Nginx ingress controller for routing traffic to different versions
 - **Persistent Storage**: MySQL data persistence using `Persistant Volume Claims`.
 - **Configuration Management**: Centralized ConfigMaps and Secrets
 
-### Architecture Diagram
+#### Architecture Diagram
 ![alt text](image.png)
 
-## 🌐 Access Points
+#### 🌐 Access Points
 
 ### Application Endpoints
 All applications share the same database and are accessible via different URL paths:
@@ -23,7 +23,7 @@ All applications share the same database and are accessible via different URL pa
 - **Version 1.1.0**: `http://moonrider.local/v1.1/*`
 - **Version 2.0.0**: `http://moonrider.local/v2/*`
 
-### API Endpoints
+#### API Endpoints
 Each version exposes the same REST API:
 
 - **Health Check**: `GET /actuator/health`
@@ -31,7 +31,7 @@ Each version exposes the same REST API:
 
 ### Example Usage
 
-# Health check for v1
+#### Health check for v1
 curl -H "Host: moonrider.local" http://192.168.1.7/v1/actuator/health
 
 ## 🔧 Configuration
@@ -46,7 +46,14 @@ All Spring Boot applications use the same configuration:
 - `SPRING_JPA_HIBERNATE_DDL_AUTO`: `update`
 - `SPRING_PROFILES_ACTIVE`: `default`
 
-## 📊 Monitoring and Health Checks
+### 📝 Notes
+
+- All resources are deployed in the `default` namespace
+- The architecture supports easy addition of new application versions
+- For the `host` field in ingress, `moonrider.local` is used which is mapped in `/etc/hosts` as `192.168.1.7`. Error was shown when the IP address was directly written in the hosts field
+- MicroK8s was used to setup the K8s cluster
+
+### 📊 Monitoring and Health Checks
 
 ### Application Health
 Each Spring Boot application includes:
@@ -54,21 +61,14 @@ Each Spring Boot application includes:
 - **Database Connectivity Check**: Automatic health checks
 - **Readiness Probe**: Ensures application is ready to serve traffic
 
-## 🔒 Security Considerations
+### 🔒 Security Considerations
 
 - **Secrets**: Database passwords stored as Kubernetes secrets
 - **Network**: Services use ClusterIP (internal access only)
 - **Ingress**: External access controlled via ingress rules
 - **Resource Limits**: CPU and memory limits configured for all containers
 
-## 📝 Notes
-
-- All resources are deployed in the `default` namespace
-- The architecture supports easy addition of new application versions
-- For the `host` field in ingress, `moonrider.local` is used which is mapped in `/etc/hosts` as `192.168.1.7`. Error was shown when the IP address was directly written in the hosts field
-- MicroK8s was used to setup the K8s cluster
-
-## 🎯 Use Cases
+### 🎯 Use Cases
 
 This architecture is ideal for:
 - **Feature Flags**: Testing new features in production
