@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    image: spring-boot-app:v1.1.0
     ports:
       - "${APP_PORT:-9191}:9191"
     environment:
