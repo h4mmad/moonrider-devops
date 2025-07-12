@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for Spring Boot Application
 
 # Stage 1: Build the application
-FROM maven:3.9.5-openjdk-17-slim AS builder
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime image
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-jammy
 
 # Create non-root user for security
 RUN groupadd -r spring && useradd -r -g spring spring
