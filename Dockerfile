@@ -1,13 +1,13 @@
-# Multi-stage build for Spring Boot application
-FROM maven:3.8.4-openjdk-8-slim AS build
+# Multi-stage Dockerfile for Spring Boot Application
+
+# Stage 1: Build the application
+FROM maven:3.8.6-openjdk-11-slim AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy pom.xml first for better layer caching
+# Copy pom.xml and download dependencies
 COPY pom.xml .
-
-# Download dependencies (this layer will be cached if pom.xml doesn't change)
 RUN mvn dependency:go-offline -B
 
 # Copy source code
@@ -16,34 +16,33 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Runtime stage
-FROM openjdk:8-jre-alpine
+# Stage 2: Runtime image
+FROM openjdk:11-jre-slim
 
-# Install necessary packages
-RUN apk add --no-cache tzdata wget
-
-# Create app user for security
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+# Create non-root user for security
+RUN groupadd -r spring && useradd -r -g spring spring
 
 # Set working directory
 WORKDIR /app
 
-# Copy the built JAR from build stage
-COPY --from=build /app/target/*.jar app.jar
+# Copy the built JAR from builder stage
+COPY --from=builder /app/target/*.jar app.jar
 
-# Change ownership to app user
-RUN chown -R appuser:appgroup /app
+# Create directory for logs
+RUN mkdir -p /app/logs && chown -R spring:spring /app
 
-# Switch to app user
-USER appuser
+# Switch to non-root user
+USER spring
 
-# Expose the port the app runs on
+# Expose port
 EXPOSE 9191
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:9191/actuator/health || exit 1
+  CMD curl -f http://localhost:9191/actuator/health || exit 1
+
+# JVM options for production
+ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport"
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"] 
