@@ -3,6 +3,7 @@ package com.javatechie.crud.example.controller;
 import com.javatechie.crud.example.entity.Product;
 import com.javatechie.crud.example.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,21 +49,20 @@ public class ProductController {
         return service.deleteProduct(id);
     }
     
-    @GetMapping("/products/search")
-    public List<Product> searchProducts(@RequestParam String keyword) {
-        return service.searchProductsByKeyword(keyword);
+    @GetMapping("/products/search/keyword")
+    public List<Product> searchProductsByKeyword(@RequestParam String keyword) {
+        return service.searchByKeyword(keyword);
     }
 
     @GetMapping("/products/search")
-public ResponseEntity<?> searchProducts(@RequestParam(required = false) String name,
-                                        @RequestParam(required = false) Double minPrice,
-                                        @RequestParam(required = false) Double maxPrice) {
-    try {
-        List<Product> result = service.search(name, minPrice, maxPrice);
-        return ResponseEntity.ok(result);
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<?> searchProducts(@RequestParam(required = false) String name,
+                                            @RequestParam(required = false) Double minPrice,
+                                            @RequestParam(required = false) Double maxPrice) {
+        try {
+            List<Product> result = service.search(name, minPrice, maxPrice);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-}
-
 }
