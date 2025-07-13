@@ -1,22 +1,6 @@
 # Multi-stage Dockerfile for Spring Boot Application
 
-# Stage 1: Build the application
-FROM maven:3.9.5-eclipse-temurin-17 AS builder
-
-# Set working directory
-WORKDIR /app
-
-# Copy pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Copy source code
-COPY src ./src
-
-# Build the application
-RUN mvn clean package -DskipTests
-
-# Stage 2: Runtime image
+# Stage 1: Runtime image
 FROM eclipse-temurin:17-jre-jammy
 
 # Create non-root user for security
@@ -25,8 +9,8 @@ RUN groupadd -r spring && useradd -r -g spring spring
 # Set working directory
 WORKDIR /app
 
-# Copy the built JAR from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+# Copy the pre-built JAR file
+COPY target/*.jar app.jar
 
 # Create directory for logs
 RUN mkdir -p /app/logs && chown -R spring:spring /app
