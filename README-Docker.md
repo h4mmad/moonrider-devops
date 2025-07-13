@@ -4,21 +4,25 @@
 
 This Docker setup meets all production security requirements:
 
-### ✅ 1. Slim Base Images
+### 1. Slim Base Images
+
 - **Build stage**: Uses `maven:3.8.4-openjdk-8-slim` (optimized Maven image)
 - **Runtime stage**: Uses `openjdk:8-jre-alpine` (minimal Alpine Linux)
 
-### ✅ 2. Multi-stage Builds
+### 2. Multi-stage Builds
+
 - **Build stage**: Compiles application with Maven
 - **Runtime stage**: Contains only JAR and runtime dependencies
 - **Result**: Significantly smaller production image
 
-### ✅ 3. Secure Environment Variables & Secrets
+### 3. Secure Environment Variables & Secrets
+
 - **Single `.env` file** for all environments
 - **No hardcoded passwords** in configuration files
 - **Environment variables** for all sensitive data
 
-### ✅ 4. Health Checks
+### 4. Health Checks
+
 - **Built-in health monitoring** with configurable intervals
 - **Checks application health endpoint** at `/actuator/health`
 - **Proper timeout and retry configuration**
@@ -37,12 +41,14 @@ This Docker setup meets all production security requirements:
 ## Environment Configuration
 
 ### Required Variables:
+
 - `DB_PASSWORD` - Database password
 - `MYSQL_ROOT_PASSWORD` - MySQL root password
 
 ### Optional Variables (with defaults):
+
 - `DB_HOST=mysql` - Database host
-- `DB_PORT=3306` - Database port  
+- `DB_PORT=3306` - Database port
 - `DB_NAME=javatechie` - Database name
 - `DB_USERNAME=root` - Database username
 - `APP_PORT=9191` - Application port
@@ -76,4 +82,4 @@ docker compose up --build
 # Stop services
 docker compose down
 
-``` 
+```
